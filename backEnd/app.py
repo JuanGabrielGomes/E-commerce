@@ -6,16 +6,19 @@ app = Flask(__name__)
 
 @app.route('/usuarios', methods=['POST'])
 def adicionar_usuarios():
-    dados = request.get_json()
+    dados = request.get_json(silent=True)
     novo_usuario = models.Usuario(dados['nome'], dados['email'], dados['senha'])
     conn = None
     try:
+        if not novo_usuario.nome or not novo_usuario.email or not novo_usuario.senha:
+            return jsonify({'erro': 'Nome, email e senha são obrigatórios'}), 400
+        if dados.get('id') is not None:
+            return jsonify({'erro': 'ID não deve ser fornecido ao criar um novo usuário'}), 400
         conn = ConexaoDB.connect_db()
         query = novo_usuario.salvar(conn)
         ConexaoDB.commit_db(conn)
-        novo_id = query.inserted_primary_key[0]
 
-        return jsonify({'mensagem': 'Usuário adicionado com sucesso!', 'id': novo_id}), 201
+        return jsonify({'mensagem': 'Usuário adicionado com sucesso!'}), 201
     
     except Exception as e:
         ConexaoDB.rollback_db(conn)
@@ -40,5 +43,37 @@ def listar_usuarios():
     finally:
         ConexaoDB.close_db(conn)
 
+@app.route('/usuarios/<int:id>', methods=["PUT"])
+def atualizar_usuario(id):
+    dados_atualizados = request.get_json(silent=True)
+    conn = None
+    try:
+        conn = ConexaoDB.connect_db()
+        query = models.Usuario.atualizar(conn, id, dados_atualizados)
+        ConexaoDB.commit_db(conn)
+        if query == 0:
+            return jsonify({'erro': 'Usuário não encontrado'}), 404   
+        return jsonify({"mensagem": "Usuário atualziado com sucesso!"}), 200
+    except Exception as e:
+        ConexaoDB.rollback_db(conn)
+        return jsonify({'erro': str(e)}), 500
+    finally:
+        ConexaoDB.close_db(conn)
+
+@app.route('/usuarios/<int:id>', methods=["DELETE"])
+def deletar_usuario(id):
+    conn = None
+    try:
+        conn = ConexaoDB.connect_db()
+        query = models.Usuario.deletar(conn, id)
+        ConexaoDB.commit_db(conn)
+        if query == 0:
+            return jsonify({'erro': 'Usuário não encontrado'}), 404   
+        return jsonify({"mensagem": "Usuário deletado com sucesso!"}), 200
+    except Exception as e:
+        ConexaoDB.rollback_db(conn)
+        return jsonify({'erro': str(e)}), 500
+    finally:
+        ConexaoDB.close_db(conn)
 if __name__ == '__main__':
     app.run(debug=True)

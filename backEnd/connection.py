@@ -28,6 +28,3 @@ def commit_db(connection):
 def rollback_db(connection):
     if connection:
         connection.rollback()
-
-
-  
