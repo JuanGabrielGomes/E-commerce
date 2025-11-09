@@ -31,8 +31,7 @@ def listar_usuarios():
     conn = None
     try:
         conn = ConexaoDB.connect_db()
-        usuario_model = models.Usuario(None, None, None)
-        resultados = usuario_model.lerTodos(conn)
+        resultados = models.Usuario.lerTodos(conn)
         usuarios = [{'id': row.id, 'nome': row.nome, 'email': row.email} for row in resultados]
 
         return jsonify(usuarios), 200

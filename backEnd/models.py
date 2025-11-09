@@ -1,5 +1,5 @@
 import connection as ConexaoDB
-from connection import usuarios_tabela
+from connection import usuarios_tabela, produtos_tabela
 
 class Usuario:
     def __init__(self, nome, email, senha):
@@ -12,7 +12,8 @@ class Usuario:
         query = conn.execute(ins)
         return query
     
-    def lerTodos(self, conn):
+    @classmethod
+    def lerTodos(cls, conn):
         sel = usuarios_tabela.select()        
         result = conn.execute(sel)        
         return result.fetchall()
@@ -28,3 +29,19 @@ class Usuario:
         delete = usuarios_tabela.delete().where(usuarios_tabela.c.id == id)
         query = conn.execute(delete)
         return query.rowcount
+    
+class Produto:
+    def __init__(self, id_produto, preco, imagem, nome_produto, descricao):
+        self.id_produto = id_produto
+        self.preco = preco
+        self.imagem = imagem
+        self.nome_produto = nome_produto
+        self.descricao = descricao
+
+    def salvar(self, conn):
+        ins = produtos_tabela.insert().values(id_produto=self.id_produto, preco=self.preco, imagem=self.imagem, nome_produto=self.nome_produto, descricao=self.desricao)
+        query = conn.execute(ins)
+        return query
+    
+    def lerTodos(self, conn):
+        pass
