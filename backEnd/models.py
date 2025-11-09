@@ -31,17 +31,21 @@ class Usuario:
         return query.rowcount
     
 class Produto:
-    def __init__(self, id_produto, preco, imagem, nome_produto, descricao):
+    def __init__(self, id_produto, preco, desconto, imagem, nome_produto, descricao):
         self.id_produto = id_produto
         self.preco = preco
+        self.desconto = desconto
         self.imagem = imagem
         self.nome_produto = nome_produto
         self.descricao = descricao
 
     def salvar(self, conn):
-        ins = produtos_tabela.insert().values(id_produto=self.id_produto, preco=self.preco, imagem=self.imagem, nome_produto=self.nome_produto, descricao=self.desricao)
+        ins = produtos_tabela.insert().values(id_produto=self.id_produto, preco=self.preco,imagem=self.imagem, nome_produto=self.nome_produto, descricao=self.descricao)
         query = conn.execute(ins)
         return query
     
-    def lerTodos(self, conn):
-        pass
+    @classmethod
+    def lerTodos(cls, conn):
+        sel = produtos_tabela.select()
+        result = conn.execute(sel)
+        return result.fetchall()

@@ -10,8 +10,8 @@ engine = create_engine(string_de_conexao, echo=True)
 
 meta = MetaData()
 
-usuarios_tabela = Table('usuarios', meta, Column('id', Integer, primary_key=True), Column('nome', String), Column('email', String), Column('senha', String))
-produtos_tabela = Table('produtos', meta, Column('id_produto', Integer, primary_key=True), Column('preco', Float), Column('imagem', String), Column('nome_produto', String), Column('descricao', String))
+usuarios_tabela = Table('usuarios', meta, Column('id', Integer, primary_key=True), Column('nome', String), Column('email', String), Column('senha', String(128)))
+produtos_tabela = Table('produtos', meta, Column('id_produto', Integer, primary_key=True), Column('preco', Float), Column('desconto', Float), Column('imagem', String), Column('nome_produto', String), Column('descricao', String))
 
 def connect_db():
     connection = engine.connect()
