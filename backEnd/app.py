@@ -9,14 +9,19 @@ bcrypt = Bcrypt(app)
 @app.route('/usuarios', methods=['POST'])
 def adicionar_usuarios():
     dados = request.get_json(silent=True)
-    hash_senha = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
-    novo_usuario = models.Usuario(dados['nome'], dados['email'], hash_senha)
     conn = None
     try:
-        if not novo_usuario.nome or not novo_usuario.email or not novo_usuario.senha:
+        if not dados.get('senha'):
+            return jsonify({'erro': 'Senha é obrigatório'}), 400
+        
+        hash_senha = bcrypt.generate_password_hash(dados['senha']).decode('utf-8')
+
+        if not dados.get('nome') or not dados.get('email') or not dados.get('senha'):
             return jsonify({'erro': 'Nome, email e senha são obrigatórios'}), 400
         if dados.get('id') is not None:
             return jsonify({'erro': 'ID não deve ser fornecido ao criar um novo usuário'}), 400
+        
+        novo_usuario = models.Usuario(dados['nome'], dados['email'], hash_senha)
         conn = ConexaoDB.connect_db()
         query = novo_usuario.salvar(conn)
         ConexaoDB.commit_db(conn)

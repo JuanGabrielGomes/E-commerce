@@ -43,7 +43,8 @@ class Produto:
         ins = produtos_tabela.insert().values(id_produto=self.id_produto, preco=self.preco,imagem=self.imagem, nome_produto=self.nome_produto, descricao=self.descricao)
         query = conn.execute(ins)
         return query
-    
+
+
     @classmethod
     def lerTodos(cls, conn):
         sel = produtos_tabela.select()

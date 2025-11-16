@@ -14,9 +14,12 @@ usuarios_tabela = Table('usuarios', meta, Column('id', Integer, primary_key=True
 produtos_tabela = Table('produtos', meta, Column('id_produto', Integer, primary_key=True), Column('preco', Float), Column('desconto', Float), Column('imagem', String), Column('nome_produto', String), Column('descricao', String))
 
 def connect_db():
-    connection = engine.connect()
-
-    return connection
+    try:
+        connection = engine.connect()
+        return connection
+    except Exception as e:
+        print(f"Erro ao conectar ao banco de dados: {e}")
+        raise e
 
 def close_db(connection):
     if connection:
