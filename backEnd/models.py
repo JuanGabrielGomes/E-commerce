@@ -1,4 +1,3 @@
-import connection as ConexaoDB
 from connection import usuarios_tabela, produtos_tabela
 
 class Usuario:
