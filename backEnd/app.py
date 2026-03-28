@@ -1,7 +1,7 @@
 from flask import Flask, request, jsonify
 from flask_bcrypt import Bcrypt
 import models
-import connection as ConexaoDB
+import conexao as ConexaoDB
 
 app = Flask(__name__)
 bcrypt = Bcrypt(app)
@@ -40,9 +40,8 @@ def listar_usuarios():
     try:
         conn = ConexaoDB.connect_db()
         resultados = models.Usuario.lerTodos(conn)
-        usuarios = [{'id': row.id, 'nome': row.nome, 'email': row.email} for row in resultados]
-
-        return jsonify(usuarios), 200
+        
+        return jsonify(resultados), 200
     
     except Exception as e:
         ConexaoDB.rollback_db(conn)
@@ -56,10 +55,8 @@ def atualizar_usuario(id):
     conn = None
     try:
         conn = ConexaoDB.connect_db()
-        query = models.Usuario.atualizar(conn, id, dados_atualizados)
+        models.Usuario.atualizar(conn, id, dados_atualizados)
         ConexaoDB.commit_db(conn)
-        if query == 0:
-            return jsonify({'erro': 'Usuário não encontrado'}), 404   
         return jsonify({"mensagem": "Usuário atualziado com sucesso!"}), 200
     except Exception as e:
         ConexaoDB.rollback_db(conn)
