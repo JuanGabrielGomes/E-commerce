@@ -1,7 +1,7 @@
 import psycopg2
 
 senha_do_banco = "usuario"
-ip_da_vm = "192.168.1.8"
+ip_da_vm = "192.168.2.10"
 nome_do_banco = "ecommerce"
 
 
