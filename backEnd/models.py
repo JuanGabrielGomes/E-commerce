@@ -62,7 +62,46 @@ class Usuario:
             cur.execute(delete, (id, ))
         finally:
             cur.close()
+class Produto:
+    def __init__(self, id_produto, preco, desconto, imagem, nome_produto, descricao):
+        self.id_produto = id_produto
+        self.preco = preco
+        self.desconto = desconto
+        self.imagem = imagem
+        self.nome_produto = nome_produto
+        self.descricao = descricao
 
+    def salvar(self, conn):
+        cur = conn.cursor()
+        
+        sql = "INSERT INTO produtos (id_produto, preco, desconto, imagem, nome_produto, descricao) VALUES (%s, %s, %s, %s, %s, %s);"
+        valores = (self.id_produto, self.preco, self.desconto, self.imagem, self.nome_produto, self.descricao)
+        
+        try:
+            cur.execute(sql, valores)
+        finally:
+            cur.close()
+        
+    @classmethod
+    def lerTodos(cls, conn):
+        cur = conn.cursor()
+        try:
+            cur.execute("SELECT id_produto, preco, desconto, imagem, nome_produto, descricao FROM produtos ORDER BY id_produto;")
+            produtos_no_banco = cur.fetchall()
+        
+            lista_formatada = []
+            for p in produtos_no_banco:
+                lista_formatada.append({
+                    "id_produto": p[0],
+                    "preco": p[1],
+                    "desconto": p[2],
+                    "imagem": p[3],
+                    "nome_produto": p[4],
+                    "descricao": p[5]
+                })
+            return lista_formatada
+        finally:
+            cur.close()
 #class Produto:
     #def __init__(self, id_produto, preco, desconto, imagem, nome_produto, descricao):
         ##self.preco = preco

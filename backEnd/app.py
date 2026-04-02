@@ -99,5 +99,20 @@ def adicionar_produtos():
     finally:
         ConexaoDB.close_db(conn)
 
+@app.route('/produtos', methods=['GET'])
+def listar_produtos():
+    conn = None
+    try:
+        conn = ConexaoDB.connect_db()
+        resultados = models.Produto.lerTodos(conn)
+        
+        return jsonify(resultados), 200
+    
+    except Exception as e:
+        ConexaoDB.rollback_db(conn)
+        return jsonify({'erro': str(e)}), 500
+    finally:
+        ConexaoDB.close_db(conn)
+        
 if __name__ == '__main__':
     app.run(debug=True)
